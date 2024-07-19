@@ -21,9 +21,9 @@ const createFields = [
       </h2>
       <p class="text-gray-400 text-sm">0</p>
     </div>
-    <div class="flex items-center text-gray-300">
+    <button onclick={`document.getElementById('dialog-create-${id}').showModal()`} class="flex items-center text-gray-300">
       <p class="text-2xl transition ease-in-out delay-150 text-blue-500 hover:-translate-y-1 hover:scale-110 hover:text-indigo-500 duration-300 cursor-pointer">+</p>
-    </div>
+    </button>
   </div>
   <KanbanCard />
   
@@ -36,6 +36,5 @@ const createFields = [
 
   <!-- Modal para crear nueva tarea -->
   <Modal id={`dialog-create-${id}`} title="Create Task" formType="create-task" fields={createFields}>
-    <button slot="close" class="mt-4 bg-red-500 text-white py-2 px-4 rounded">Close modal</button>
   </Modal>
 </div>

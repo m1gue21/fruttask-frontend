@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const passwordError = document.getElementById('password-error') as HTMLSpanElement;
 
   function validateForm(event: Event) {
-      event.preventDefault(); // Evitar que el formulario se envíe automáticamente
+      event.preventDefault(); 
 
       
       const isNameLongEnough = nameInput.value.trim().length >= 3;
