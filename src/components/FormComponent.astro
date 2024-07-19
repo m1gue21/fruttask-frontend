@@ -1,0 +1,70 @@
+---
+// src/components/FormComponent.astro
+
+// Extraemos las propiedades `formType` y `fields` de las props de Astro.
+const { formType, fields = [] } = Astro.props;
+---
+
+<!-- Formulario principal -->
+<form id="form" data-type={formType}>
+  <div class="w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg">
+    <div class="px-6 py-4">
+
+      <!-- Logo de la aplicación -->
+      <div class="flex justify-center mx-auto">
+        <img class="h-40" src="/fruttask-logo.png" alt="fruttask-logo" />
+      </div>
+
+      <!-- Título del formulario basado en el tipo de formulario -->
+      <h3 class="mt-3 text-xl font-medium text-center text-gray-600">
+        {formType === 'sign-up' ? 'Welcome to Fruttask!' : formType === 'sign-in' ? 'Welcome Back!' : formType === 'create-task' ? 'Create Task' : 'Update Task'}
+      </h3>
+
+      <!-- Subtítulo del formulario basado en el tipo de formulario -->
+      <p class="mt-1 text-center text-gray-500">
+        {formType === 'sign-up' ? 'Create an account' : formType === 'sign-in' ? 'Login' : formType === 'create-task' ? 'Enter task details' : 'Update task details'}
+      </p>
+
+      <!-- Iteramos sobre los campos del formulario y los renderizamos -->
+      {fields.length > 0 ? fields.map(field => (
+        <div class="w-full mt-4">
+
+          <!-- Renderizamos un campo de texto o un área de texto según el tipo de campo -->
+          {field.type === "textarea" ? (
+            <textarea id={field.id} name={field.id} placeholder={field.placeholder} required={field.required} aria-label={field.label} minlength={field.minlength}
+              class="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-500 bg-white border rounded-lg focus:border-blue-400 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-blue-300"></textarea>
+          ) : (
+            <input id={field.id} name={field.id} type={field.type} placeholder={field.placeholder} required={field.required} aria-label={field.label} minlength={field.minlength}
+              class="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-500 bg-white border rounded-lg focus:border-blue-400 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-blue-300" />
+          )}
+
+          <!-- Mensaje de error para el campo, si existe -->
+          {field.error && (
+            <span id={`${field.id}-error`} class="text-red-500 text-sm hidden">
+              {field.error}
+            </span>
+          )}
+        </div>
+      )) : (
+        <p class="text-center text-gray-500">No fields available</p>
+      )}
+
+      <!-- Botón de envío del formulario -->
+      <div class="flex items-center justify-end mt-4">
+        <button class="px-6 py-2 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
+          {formType === 'sign-up' ? 'Sign Up' : formType === 'sign-in' ? 'Sign In' : 'Submit'}
+        </button>
+      </div>
+    </div>
+
+    <!-- Enlaces adicionales para los formularios de inicio de sesión y registro -->
+    {(formType === 'sign-in' || formType === 'sign-up') && (
+      <div class="flex items-center justify-center py-4 text-center bg-gray-50">
+        <span class="text-sm text-gray-600">{formType === 'sign-in' ? "Don't have an account?" : "Already have an account?"}</span>
+        <a href={formType === 'sign-in' ? "/auth/sign-up" : "/auth/sign-in"} class="mx-2 text-sm font-bold text-blue-500 hover:underline">
+          {formType === 'sign-in' ? "Register" : "Login"}
+        </a>
+      </div>
+    )}
+  </div>
+</form>

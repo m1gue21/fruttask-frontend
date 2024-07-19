@@ -1,0 +1,12 @@
+---
+// KanbanBoard.astro
+import KanbanColumn from './KanbanColumn.astro';
+---
+<div class="h-screen lg:px-10">
+  <div class="grid lg:grid-cols-4 md:grid-cols-4 sm:grid-cols-2 gap-5">
+    <KanbanColumn status="To-do" color="bg-blue-100" />
+    <KanbanColumn status="In progress" color="bg-yellow-100" />
+    <KanbanColumn status="Complete" color="bg-green-100" />
+    <KanbanColumn status="Pending" color="bg-gray-200" />
+  </div>
+</div>

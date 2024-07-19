@@ -1,0 +1,67 @@
+---
+import FormComponent from "./FormComponent.astro";
+
+// src/components/Modal.astro
+const { id, title, formType, fields } = Astro.props;
+const isTaskModal = formType === "create-task" || formType === "edit-task";
+---
+<style lang="scss">
+dialog {
+  position: fixed;
+  border-radius: 20px;
+  padding: 0;
+  border: none;
+  width: 100%;
+  max-width: 600px;
+  &::backdrop {
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    background: rgba(0, 0, 0, 0.5);
+  }
+}
+.dialog-content {
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+}
+.dialog-content.no-border {
+  border: none;
+}
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+.dialog-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+.dialog-close {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+</style>
+
+<dialog id={id}>
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h3 class="dialog-title">{title}</h3>
+        <button class="dialog-close" onclick={`document.getElementById('${id}').close()`}>&times;</button>
+      </div>
+      {isTaskModal ? (
+        <FormComponent formType={formType} fields={fields} />
+      ) : (
+        <slot />
+      )}
+      <form method="dialog">
+        <slot name="close" />
+      </form>
+    </div>
+  </dialog>

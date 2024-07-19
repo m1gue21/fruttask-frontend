@@ -1,0 +1,41 @@
+---
+// src/components/KanbanColumn.astro
+import KanbanCard from "./KanbanCard.astro";
+import Modal from "./Modal.astro";
+import FormComponent from "./FormComponent.astro";
+
+const { id, color, status, formType } = Astro.props;
+
+// Definir campos para crear y actualizar tareas
+const createFields = [
+  { id: "title", type: "text", placeholder: "Title", label: "Title", required: true },
+  { id: "description", type: "textarea", placeholder: "Description", label: "Description", required: true }
+];
+---
+
+<div class="bg-white rounded px-2 py-2 movable-items max-w-">
+  <div class="flex flex-row justify-between items-center mb-2 mx-1">
+    <div class="flex items-center">
+      <h2 class={`text-sm w-max px-1 rounded mr-2 text-gray-700 ${color}`}>
+        {status}
+      </h2>
+      <p class="text-gray-400 text-sm">0</p>
+    </div>
+    <div class="flex items-center text-gray-300">
+      <p class="text-2xl transition ease-in-out delay-150 text-blue-500 hover:-translate-y-1 hover:scale-110 hover:text-indigo-500 duration-300 cursor-pointer">+</p>
+    </div>
+  </div>
+  <KanbanCard />
+  
+  <!-- Botón para añadir nueva tarea -->
+  <button onclick={`document.getElementById('dialog-create-${id}').showModal()`}
+    class="transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300 flex flex-row items-center rounded mt-2 pb-1 px-4 w-min hover:cursor-pointer text-white">
+    <p class="rounded mr-2 text-2xl">+</p>
+    <p class="rounded pt-1 ml-2 text-sm">New</p>
+  </button>
+
+  <!-- Modal para crear nueva tarea -->
+  <Modal id={`dialog-create-${id}`} title="Create Task" formType="create-task" fields={createFields}>
+    <button slot="close" class="mt-4 bg-red-500 text-white py-2 px-4 rounded">Close modal</button>
+  </Modal>
+</div>
