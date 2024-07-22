@@ -7,5 +7,29 @@ const fieldsSignIn = [
   { id: "password", type: "password", placeholder: "Password", label: "Password", required: true }
 ];
 ---
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" type="image/svg+xml" href="/fruttask-logo.png" />
+  <meta name="viewport" content="width=device-width" />
+  <meta name="generator" content={Astro.generator} />
+  <title>Fruttask Sign in</title>
+</head>
 
 <FormComponent formType="sign-in" fields={fieldsSignIn} />
+
+<script type="module">
+  // funcion para "proteger rutas"
+	function checkAuthentication() {
+	  const token = localStorage.getItem('token');
+	  const email = localStorage.getItem('email');
+  
+	  
+	  if (token || email) {
+		window.location.href = '/';
+	  }
+	}
+  
+	document.addEventListener('DOMContentLoaded', () => {
+	  checkAuthentication();
+	});
+  </script>

@@ -1,12 +1,63 @@
 ---
 // KanbanBoard.astro
 import KanbanColumn from './KanbanColumn.astro';
+// Supongamos que puedes hacer la carga aquí o pasas los datos de otra manera
+
+
+
+   
+
 ---
 <div class="h-screen lg:px-10">
   <div class="grid lg:grid-cols-4 md:grid-cols-4 sm:grid-cols-2 gap-5">
-    <KanbanColumn status="To-do" color="bg-blue-100" />
-    <KanbanColumn status="In progress" color="bg-yellow-100" />
-    <KanbanColumn status="Complete" color="bg-green-100" />
-    <KanbanColumn status="Pending" color="bg-gray-200" />
+    <KanbanColumn id="todo-column" status="To-do" color="bg-blue-100" />
+    <KanbanColumn id="progress-column" status="In progress" color="bg-yellow-100" />
+    <KanbanColumn id="complete-column" status="Complete" color="bg-green-100" />
+    <KanbanColumn id="pending-column" status="Pending" color="bg-gray-200" />
   </div>
 </div>
+
+<script type="module">
+  document.addEventListener('DOMContentLoaded', async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        window.location.href = '/auth/signin'; // Redirige si no hay token
+        return;
+    }
+
+    try {
+        const response = await fetch('http://localhost:3000/api/v1/tasks', {
+            headers: {
+                'Authorization': `Bearer ${token}`  // Usar Bearer para la autenticación tipo token
+            }
+        });
+        if (!response.ok) throw new Error('Failed to fetch tasks');
+        const tasks = await response.json();
+
+        // Clasificamos las tareas en las categorías correspondientes
+        const todoTasks = tasks.filter(task => task.status === 'todo');
+        const inProgressTasks = tasks.filter(task => task.status === 'in-progress');
+        const completeTasks = tasks.filter(task => task.status === 'complete');
+        const pendingTasks = tasks.filter(task => task.status === 'pending');
+
+        // Actualizar el DOM con las tareas clasificadas
+        updateColumn('todo-column', 'To-do', 'bg-blue-100', todoTasks);
+        updateColumn('progress-column', 'In progress', 'bg-yellow-100', inProgressTasks);
+        updateColumn('complete-column', 'Complete', 'bg-green-100', completeTasks);
+        updateColumn('pending-column', 'Pending', 'bg-gray-200', pendingTasks);
+    } catch (error) {
+        console.error('Error:', error.message);
+    }
+  });
+
+  function updateColumn(columnId, status, color, tasks) {
+      const column = document.getElementById(columnId);
+      column.innerHTML = ''; // Clear existing column content
+      tasks.forEach(task => {
+          const taskElement = document.createElement('div');
+          taskElement.className = 'task';
+          taskElement.innerHTML = `<div class="bg-white p-2 mb-2 rounded shadow">${task.title}</div>`; // Customize as needed
+          column.appendChild(taskElement);
+      });
+  }
+</script>

@@ -1,13 +1,80 @@
 ---
-import FormComponent from "../../components/Form.astro";
-
-// src/pages/sign-up.astro
+import Form from "../../components/Form.astro";
 
 const fieldsSignUp = [
-  { id: "fullname", type: "text", placeholder: "Full Name", label: "Full Name", required: true, minlength: "3", error: "Name must be at least 3 characters long" },
+  { id: "name", type: "text", placeholder: " Name", label: " Name", required: true, minlength: "3", error: "Name must be at least 3 characters long" },
   { id: "email", type: "email", placeholder: "Email Address", label: "Email Address", required: true, error: "Please enter a valid Email" },
-  { id: "password", type: "password", placeholder: "Password", label: "Password", required: true, error: "Passwords cannot be empty or do not match" },
-  { id: "confirm-password", type: "password", placeholder: "Confirm Password", label: "Confirm Password", required: true }
+  { id: "password", type: "password", placeholder: "Password", label: "Password", required: true, error: "Passwords cannot be empty " },
 ];
+
+// Función para manejar el envío del formulario de registro
+async function handleSignUp(event: { preventDefault: () => void; target: HTMLFormElement; }) {
+  event.preventDefault();
+  console.log('Formulario enviado, la página no debe recargarse');
+  const formData = new FormData(event.target);
+  const name = formData.get('name');
+  const email = formData.get('email');
+  const password = formData.get('password');
+
+  try {
+    const response = await fetch('http://localhost:3000/api/v1/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name, email, password })
+    });
+
+    if (!response.ok) throw new Error('Failed to register user');
+
+    const result = await response.json();
+    console.log('User registered:', result);
+    // Aquí puedes redirigir al usuario o manejar la respuesta como prefieras
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
+}
+
 ---
-  <FormComponent formType="sign-up" fields={fieldsSignUp} />
+
+<script type="module">
+
+  // Carga los usuarios
+  document.addEventListener('DOMContentLoaded', async () => {
+    try {
+      const response = await fetch('http://localhost:3000/api/v1/users');
+      if (!response.ok) throw new Error('Failed to fetch users');
+      const users = await response.json();
+      console.log(users);
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
+  });
+</script>
+
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" type="image/svg+xml" href="/fruttask-logo.png" />
+  <meta name="viewport" content="width=device-width" />
+  <meta name="generator" content={Astro.generator} />
+  <title>Fruttask Sign up</title>
+</head>
+
+<Form handleSubmit={handleSignUp} formType="sign-up" fields={fieldsSignUp}  />
+
+<script type="module">
+  // funcion para "proteger rutas"
+	function checkAuthentication() {
+	  const token = localStorage.getItem('token');
+	  const email = localStorage.getItem('email');
+  
+	  
+	  if (token || email) {
+		window.location.href = '/';
+	  }
+	}
+  
+	document.addEventListener('DOMContentLoaded', () => {
+	  checkAuthentication();
+	});
+  </script>
