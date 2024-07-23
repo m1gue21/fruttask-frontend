@@ -1,6 +1,4 @@
 ---
-// src/components/KanbanCard.astro
-
 import Modal from "./Modal.astro";
 
 const { task } = Astro.props;
@@ -9,9 +7,10 @@ const editFields = [
   { id: "title", type: "text", placeholder: "Title", label: "Title", required: true },
   { id: "description", type: "textarea", placeholder: "Description", label: "Description", required: true }
 ];
+
 ---
 
-<div class="relative p-4 bg-white rounded-lg shadow border border-gray-200 group">
+<div class="relative p-4 bg-white rounded-lg shadow border border-gray-200 group mb-2">
   <!-- Botón izquierdo para navegar -->
   <div class="absolute left-0 inset-y-0 flex items-center">
     <button type="button" class="opacity-0 hover:opacity-100 focus:outline-none">
@@ -28,7 +27,6 @@ const editFields = [
     <span class="text-xs px-2 py-1 bg-blue-100 rounded-full text-blue-800 ">{task.status}</span>
 
     <div class="flex justify-end space-x-2">
-      
       <button onclick={`document.getElementById('dialog-edit-${task.id}').showModal()`}>
         <img class="h-6" src="/icons/edit.svg" alt="Edit">
       </button>
@@ -37,12 +35,14 @@ const editFields = [
         <img class="h-6" src="/icons/trash-can.svg" alt="Delete">
       </button>
     </div>
-  <div class="flex justify-between items-center">
-    <div class="text-lg font-medium text-gray-900">{task.title}</div>
+
+    <div class="flex justify-between items-center">
+      <div class="text-lg font-medium text-gray-900">{task.title}</div>
+    </div>
+    <p class="text-sm text-gray-500">{task.description}</p>
+    <p class="text-xs text-gray-400">{new Date(task.createdAt).toLocaleDateString()}</p>
   </div>
-  <p class="text-sm text-gray-500">{task.description}</p>
-  <p class="text-xs text-gray-400">{new Date(task.createdAt).toLocaleDateString()}</p>
-</div>
+
   <!-- Botón derecho para navegar -->
   <div class="absolute right-0 inset-y-0 flex items-center">
     <button type="button" class="opacity-0 hover:opacity-100 focus:outline-none">

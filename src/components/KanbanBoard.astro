@@ -1,63 +1,78 @@
 ---
-// KanbanBoard.astro
 import KanbanColumn from './KanbanColumn.astro';
-// Supongamos que puedes hacer la carga aquí o pasas los datos de otra manera
 
 
+let todoTasks = [];
+let inProgressTasks = [];
+let completeTasks = [];
+let pendingTasks = [];
 
-   
+// Esta función se encarga de clasificar y actualizar las tareas
+function classifyTasks(tasks) {
+  todoTasks = tasks.filter(task => task.status === 'todo');
+  inProgressTasks = tasks.filter(task => task.status === 'in-progress');
+  completeTasks = tasks.filter(task => task.status === 'complete');
+  pendingTasks = tasks.filter(task => task.status === 'pending');
+}
 
 ---
-<div class="h-screen lg:px-10">
-  <div class="grid lg:grid-cols-4 md:grid-cols-4 sm:grid-cols-2 gap-5">
-    <KanbanColumn id="todo-column" status="To-do" color="bg-blue-100" />
-    <KanbanColumn id="progress-column" status="In progress" color="bg-yellow-100" />
-    <KanbanColumn id="complete-column" status="Complete" color="bg-green-100" />
-    <KanbanColumn id="pending-column" status="Pending" color="bg-gray-200" />
-  </div>
-</div>
 
-<script type="module">
+<script is:inline>
   document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('token');
     if (!token) {
-        window.location.href = '/auth/signin'; // Redirige si no hay token
-        return;
+      window.location.href = '/auth/signin'; 
+      return;
     }
 
     try {
-        const response = await fetch('http://localhost:3000/api/v1/tasks', {
-            headers: {
-                'Authorization': `Bearer ${token}`  // Usar Bearer para la autenticación tipo token
-            }
-        });
-        if (!response.ok) throw new Error('Failed to fetch tasks');
-        const tasks = await response.json();
+      const response = await fetch('http://localhost:3000/api/v1/tasks', {
+        headers: {
+          'Authorization': `Bearer ${token}`  // Usar Bearer para la autenticación tipo token
+        }
+      });
+      if (!response.ok) throw new Error('Failed to fetch tasks');
+      const tasks = await response.json();
+      console.log("tasks", tasks);
 
-        // Clasificamos las tareas en las categorías correspondientes
-        const todoTasks = tasks.filter(task => task.status === 'todo');
-        const inProgressTasks = tasks.filter(task => task.status === 'in-progress');
-        const completeTasks = tasks.filter(task => task.status === 'complete');
-        const pendingTasks = tasks.filter(task => task.status === 'pending');
+      // Clasificar las tareas en las categorías correspondientes
+      classifyTasks(tasks);
 
-        // Actualizar el DOM con las tareas clasificadas
-        updateColumn('todo-column', 'To-do', 'bg-blue-100', todoTasks);
-        updateColumn('progress-column', 'In progress', 'bg-yellow-100', inProgressTasks);
-        updateColumn('complete-column', 'Complete', 'bg-green-100', completeTasks);
-        updateColumn('pending-column', 'Pending', 'bg-gray-200', pendingTasks);
+      // Renderizar las columnas nuevamente con las tareas cargadas
+      renderKanbanColumns();
+
     } catch (error) {
-        console.error('Error:', error.message);
+      console.error('Error:', error.message);
     }
   });
 
-  function updateColumn(columnId, status, color, tasks) {
-      const column = document.getElementById(columnId);
-      column.innerHTML = ''; // Clear existing column content
-      tasks.forEach(task => {
-          const taskElement = document.createElement('div');
-          taskElement.className = 'task';
-          taskElement.innerHTML = `<div class="bg-white p-2 mb-2 rounded shadow">${task.title}</div>`; // Customize as needed
-          column.appendChild(taskElement);
-      });
+  function renderKanbanColumns() {
+    const todoColumn = document.querySelector('#todo-column');
+    const progressColumn = document.querySelector('#progress-column');
+    const completeColumn = document.querySelector('#complete-column');
+    const pendingColumn = document.querySelector('#pending-column');
+
+    if (todoColumn) {
+      todoColumn.setAttribute('tasks', JSON.stringify(todoTasks));
+    }
+    if (progressColumn) {
+      progressColumn.setAttribute('tasks', JSON.stringify(inProgressTasks));
+    }
+    if (completeColumn) {
+      completeColumn.setAttribute('tasks', JSON.stringify(completeTasks));
+    }
+    if (pendingColumn) {
+      pendingColumn.setAttribute('tasks', JSON.stringify(pendingTasks));
+    }
   }
 </script>
+
+
+<div class="h-screen lg:px-10">
+  <div class="grid lg:grid-cols-4 md:grid-cols-4 sm:grid-cols-2 gap-5">
+    <KanbanColumn id="todo-column" status="To-do" color="bg-blue-100" tasks={JSON.stringify(todoTasks)} />
+    <KanbanColumn id="progress-column" status="In progress" color="bg-yellow-100" tasks={JSON.stringify(inProgressTasks)} />
+    <KanbanColumn id="complete-column" status="Complete" color="bg-green-100" tasks={JSON.stringify(completeTasks)} />
+    <KanbanColumn id="pending-column" status="Pending" color="bg-gray-200" tasks={JSON.stringify(pendingTasks)} />
+  </div>
+</div>
