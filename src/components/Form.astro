@@ -102,6 +102,13 @@ const { formType, fields = [] } = Astro.props;
         localStorage.setItem('email', result.email);
         window.location.href = '/';
       }
+
+       // Proceso para sign-up
+       if (formType === 'sign-up') {
+            console.log(`${formType} successful`, result);
+            // No necesitamos guardar token ni email aquí, solo redireccionar
+            window.location.href = '/auth/signin';
+        }
     } catch (error) {
       console.error('Error:', error.message);
     }
