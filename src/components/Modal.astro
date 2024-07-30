@@ -50,18 +50,18 @@ dialog {
 </style>
 
 <dialog id={id}>
-    <div class="dialog-content">
-      <div class="dialog-header">
-        <h3 class="dialog-title">{title}</h3>
-        <button class="dialog-close" onclick={`document.getElementById('${id}').close()`}>&times;</button>
-      </div>
-      {isTaskModal ? (
-        <FormComponent formType={formType} fields={fields} />
-      ) : (
-        <slot />
-      )}
-      <form method="dialog">
-        <slot name="close" />
-      </form>
+  <div class="dialog-content">
+    <div class="dialog-header">
+      <h3 class="dialog-title">{title}</h3>
+      <button class="dialog-close" onclick={`document.getElementById('${id}').close()`}>&times;</button>
     </div>
-  </dialog>
+    {isTaskModal ? (
+      <FormComponent formType={formType} fields={fields} />
+    ) : (
+      <slot />
+    )}
+    <form method="dialog">
+      <slot name="close" />
+    </form>
+  </div>
+</dialog>

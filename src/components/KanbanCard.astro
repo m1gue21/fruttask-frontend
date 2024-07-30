@@ -1,7 +1,7 @@
 ---
 import Modal from "./Modal.astro";
 
-const { task } = Astro.props;
+const { task, statusColor } = Astro.props;
 
 const editFields = [
   { id: "title", type: "text", placeholder: "Title", label: "Title", required: true },
@@ -10,7 +10,7 @@ const editFields = [
 
 ---
 
-<div class="relative p-4 bg-white rounded-lg shadow border border-gray-200 group mb-2">
+<div class="relative px-5 py-7 bg-white rounded-lg shadow border border-gray-200 group mb-2">
   <!-- Botón izquierdo para navegar -->
   <div class="absolute left-0 inset-y-0 flex items-center">
     <button type="button" class="opacity-0 hover:opacity-100 focus:outline-none">
@@ -24,7 +24,7 @@ const editFields = [
   </div>
 
   <div class="px-7">
-    <span class="text-xs px-2 py-1 bg-blue-100 rounded-full text-blue-800 ">{task.status}</span>
+    <span class=`text-xs px-2 py-1 ${statusColor} rounded-full text-slate-800 font-semibold capitalize`>{task.status}</span>
 
     <div class="flex justify-end space-x-2">
       <button onclick={`document.getElementById('dialog-edit-${task.id}').showModal()`}>
@@ -45,7 +45,7 @@ const editFields = [
 
   <!-- Botón derecho para navegar -->
   <div class="absolute right-0 inset-y-0 flex items-center">
-    <button type="button" class="opacity-0 hover:opacity-100 focus:outline-none">
+    <button type="button" class="opacity-0 hover:opacity-100 focus:outline-none ">
       <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-800">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
@@ -67,7 +67,7 @@ const editFields = [
   </div>
   <div class="my-4 p-2 mx-auto rounded shadow-sm border-gray-100 border-2 max-w-56">
     <h1 class="font-semibold mb-3 text-gray-700">{task.title}</h1> 
-    <p class={`bg-${task.color} text-xs w-max p-1 rounded mr-2 text-gray-700`}>{task.status}</p>
+    <p class={`${statusColor} text-xs w-max p-1 rounded mr-2 text-gray-700`}>{task.status}</p>
     <div class="flex flex-row items-center mt-2">
       <div class="text-xs text-gray-500">{task.description}</div>
     </div>

@@ -1,56 +1,6 @@
 ---
-import Form from "../../components/Form.astro";
-
-const fieldsSignUp = [
-  { id: "name", type: "text", placeholder: " Name", label: " Name", required: true, minlength: "3", error: "Name must be at least 3 characters long" },
-  { id: "email", type: "email", placeholder: "Email Address", label: "Email Address", required: true, error: "Please enter a valid Email" },
-  { id: "password", type: "password", placeholder: "Password", label: "Password", required: true, error: "Passwords cannot be empty " },
-];
-
-// Función para manejar el envío del formulario de registro
-async function handleSignUp(event: { preventDefault: () => void; target: HTMLFormElement; }) {
-  event.preventDefault();
-  console.log('Formulario enviado, la página no debe recargarse');
-  const formData = new FormData(event.target);
-  const name = formData.get('name');
-  const email = formData.get('email');
-  const password = formData.get('password');
-
-  try {
-    const response = await fetch('http://localhost:3000/api/v1/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ name, email, password })
-    });
-
-    if (!response.ok) throw new Error('Failed to register user');
-
-    const result = await response.json();
-    console.log('User registered:', result);
-    // Aquí puedes redirigir al usuario o manejar la respuesta como prefieras
-  } catch (error) {
-    console.error('Error:', error.message);
-  }
-}
 
 ---
-
-<script type="module">
-
-  // Carga los usuarios
-  document.addEventListener('DOMContentLoaded', async () => {
-    try {
-      const response = await fetch('http://localhost:3000/api/v1/users');
-      if (!response.ok) throw new Error('Failed to fetch users');
-      const users = await response.json();
-      console.log(users);
-    } catch (error) {
-      console.error('Error:', error.message);
-    }
-  });
-</script>
 
 <head>
   <meta charset="utf-8" />
@@ -59,10 +9,130 @@ async function handleSignUp(event: { preventDefault: () => void; target: HTMLFor
   <meta name="generator" content={Astro.generator} />
   <title>Fruttask Sign up</title>
 </head>
+<body class="flex items-center justify-center min-h-screen">
+  <div
+    class="w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-md"
+  >
+    <div class="px-6 py-4">
+      <div class="flex justify-center mx-auto">
+        <img class="h-40" src="/fruttask-logo.png" alt="fruttask-logo" />
+      </div>
 
-<Form handleSubmit={handleSignUp} formType="sign-up" fields={fieldsSignUp}  />
+      <h3 class="mt-3 text-xl font-medium text-center text-gray-600">
+        Welcome to Fruttask!
+      </h3>
+
+      <p class="mt-1 text-center text-gray-500">Create an account</p>
+
+      <form id="signup-form" method="POST">
+        <div class="w-full mt-4">
+          <p id="error-message" class="error-message" style="display: none;"></p>
+
+          <input
+            id="name-input"
+            name="name"
+            class="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-500 bg-white border rounded-lg focus:border-blue-400 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-blue-300"
+            type="text"
+            placeholder="Name"
+            aria-label="Name"
+            minlength="3"  
+            maxlength="20"
+            required
+          />
+        </div>
+
+        <div class="w-full mt-4">
+          <input
+            id="email-input"
+            name="email"
+            class="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-500 bg-white border rounded-lg focus:border-blue-400 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-blue-300"
+            type="email"
+            placeholder="Email Address"
+            aria-label="Email Address"
+            required
+          />
+        </div>
+
+        <div class="w-full mt-4">
+          <input
+            class="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-500 bg-white border rounded-lg focus:border-blue-400 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-blue-300"
+            name="password"
+            type="password"
+            placeholder="Password"
+            aria-label="Password"
+            required
+          />
+        </div>
+
+        <div class="flex items-center justify-end mt-4">
+          <button
+            class="px-6 py-2 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50"
+          >
+            Sign Up
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <div class="flex items-center justify-center py-4 text-center bg-gray-50">
+      <span class="text-sm text-gray-600">Already have an account? </span>
+
+      <a
+        href="/auth/signin"
+        class="mx-2 text-sm font-bold text-blue-500 hover:underline">Login</a
+      >
+    </div>
+  </div>
+</body>
+
 
 <script type="module">
+  async function handleSignUp(event) {
+    event.preventDefault();
+    console.log("Formulario enviado, la página no debe recargarse");
+    const formData = new FormData(event.target);
+    const name = formData.get("name");
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    try {
+      const response = await fetch("http://localhost:3000/api/v1/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      if (!response.ok) throw new Error("Failed to register user");
+
+      const result = await response.json();
+      console.log("User registered:", result);
+      // Redirige al usuario a la página de inicio de sesión
+      window.location.href = '/auth/signin';
+    } catch (error) {
+      console.error("Error:", error.message);
+        errorMessageElement.textContent = error.message;
+        errorMessageElement.style.display = "block";
+    }
+  }
+
+  document.getElementById("signup-form").addEventListener("submit", handleSignUp);
+
+  // Carga los usuarios
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      const response = await fetch("http://localhost:3000/api/v1/users");
+      if (!response.ok) throw new Error("Failed to fetch users");
+      const users = await response.json();
+      console.log(users);
+    } catch (error) {
+      console.error("Error:", error.message);
+    }
+  });
+</script>
+
+<!-- <script type="module">
   // funcion para "proteger rutas"
 	function checkAuthentication() {
 	  const token = localStorage.getItem('token');
@@ -77,4 +147,4 @@ async function handleSignUp(event: { preventDefault: () => void; target: HTMLFor
 	document.addEventListener('DOMContentLoaded', () => {
 	  checkAuthentication();
 	});
-  </script>
+  </script> -->

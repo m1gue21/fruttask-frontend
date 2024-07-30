@@ -4,30 +4,41 @@
 import KanbanCard from "./KanbanCard.astro";
 import Modal from "./Modal.astro";
 
-const { id, color, status, } = Astro.props;
+const { id, color, title, tasksStatus } = Astro.props;
 
-// Definir campos para crear y actualizar tareas
+
+let token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im1pZ3VlZnJlZWFnZW50QGdtYWlsLmNvbSIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzIyMDEyOTAzLCJleHAiOjE3MjIwOTkzMDN9.da1cUVsXKVl-LiHl1LXtFxP-sO66iWzq2LbfZlc-BIs'
+
 const createFields = [
   { id: "title", type: "text", placeholder: "Title", label: "Title", required: true },
   { id: "description", type: "textarea", placeholder: "Description", label: "Description", required: true }
 ];
 
+ let tasks = []
 
-const tasks = [ 
-{id: 4, title: 'tarea 4', description: 'esta es una descripcion de ejemplo realizada para una task generica desde postman', status: 'todo', deletedAt: null},
-{id: 5, title: 'tarea 5', description: 'esta es una descripcion de ejemplo realizada para una task generica desde postman', status: 'in-progress', deletedAt: null},
-{id: 6, title: 'tarea 6', description: 'esta es una descripcion de ejemplo realizada para una task generica desde postman', status: 'complete', deletedAt: null},
-{id: 7, title: 'tarea 7', description: 'esta es una descripcion de ejemplo realizada para una task generica desde postman', status: 'complete', deletedAt: null},
-{id: 8, title: 'tarea 8', description: 'esta es una descripcion de ejemplo realizada para una task generica desde postman', status: 'complete', deletedAt: null},
-]
+ try {
+  const response = await fetch(`http://localhost:3000/api/v1/tasks/by-status/${tasksStatus}`, {
+        headers: {
+          'Authorization': `Bearer ${token}` 
+        }
+      });
+      if (!response.ok) throw new Error('Failed to fetch tasks');
+      let fetchedTasks = await response.json();
+      tasks = fetchedTasks
+      console.log(`${tasksStatus} tasks:`, tasks)
 
+
+    } catch (error) {
+      console.error('Error:', error.message);
+    }
 ---
+
 
 <div class="bg-white rounded px-2 py-2 movable-items max-w-">
   <div class="flex flex-row justify-between items-center mb-2 mx-1">
     <div class="flex items-center">
       <h2 class={`text-sm w-max px-1 rounded mr-2 text-gray-700 ${color}`}>
-        {status}
+        {title}
       </h2>
       <p class="text-gray-400 text-sm">{tasks.length}</p>
     </div>
@@ -36,15 +47,15 @@ const tasks = [
     </button>
   </div>
   {tasks.map(task => (
-    <KanbanCard id={task.id} task={task} />
+    <KanbanCard id={task.id} task={task} statusColor={color}  />
   ))}
   
   <!-- Botón para añadir nueva tarea -->
-  <button onclick={`document.getElementById('dialog-create-${id}').showModal()`}
+  <!-- <button onclick={`document.getElementById('dialog-create-${id}').showModal()`}
     class="transition ease-in-out delay-150 bg-blue-500 hover:-translate-y-1 hover:scale-110 hover:bg-indigo-500 duration-300 flex flex-row items-center rounded mt-2 pb-1 px-4 w-min hover:cursor-pointer text-white">
     <p class="rounded mr-2 text-2xl">+</p>
     <p class="rounded pt-1 ml-2 text-sm">New</p>
-  </button>
+  </button> -->
 
   <!-- Modal para crear nueva tarea -->
   <Modal id={`dialog-create-${id}`} title="Create Task" formType="create-task" fields={createFields}>

@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const passwordError = document.getElementById('password-error') as HTMLSpanElement;
 
   function validateForm(event: Event) {
-      event.preventDefault(); 
+      event.preventDefault(); // Evitar que el formulario se envíe automáticamente
 
       
       const isNameLongEnough = nameInput.value.trim().length >= 3;
@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // Decidir si el formulario debe enviarse
       if (isEmailValid && arePasswordsNotEmpty && arePasswordsMatching) {
-          form.submit(); // Si todo es válido, enviar el formulario
+          form?.submit(); // Si todo es válido, enviar el formulario
       }
   }
 
